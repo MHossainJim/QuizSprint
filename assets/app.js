@@ -261,7 +261,8 @@ function pollRoomStatus() {
     if (!window.quizData) return;
     
     statusPoll = setInterval(function() {
-        fetch(`api/room_status.php?room_id=${window.quizData.roomId}`)
+        // Add timestamp to prevent caching
+        fetch(`api/room_status.php?room_id=${window.quizData.roomId}&t=${Date.now()}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.status !== window.quizData.status) {
