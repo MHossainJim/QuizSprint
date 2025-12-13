@@ -6,6 +6,9 @@ if (!isLoggedIn() || !hasRole('student')) {
     redirect('login.php', 'Please login as a student to access this page.', 'error');
 }
 
+// Auto-update room statuses
+updateRoomStatuses($pdo);
+
 // Get room ID
 $room_id = $_GET['room'] ?? null;
 if (!$room_id) {
@@ -71,7 +74,7 @@ $total_questions = $stmt->fetch()['total'];
             <?php if ($room['status'] === 'waiting'): ?>
                 <div class="waiting-screen">
                     <div class="waiting-content">
-                        <h2>🕐 Waiting for Quiz to Start</h2>
+                        <h2>Waiting for Quiz to Start</h2>
                         <p>Your teacher will start the quiz soon. Stay on this page!</p>
                         <div class="waiting-stats">
                             <div class="stat">
@@ -88,7 +91,7 @@ $total_questions = $stmt->fetch()['total'];
             <?php elseif ($room['status'] === 'finished'): ?>
                 <div class="finished-screen">
                     <div class="finished-content">
-                        <h2>🏁 Quiz Completed</h2>
+                        <h2>Quiz Completed</h2>
                         <p>Thanks for participating! Check the final leaderboard below.</p>
                     </div>
                 </div>

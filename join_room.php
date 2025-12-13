@@ -6,6 +6,9 @@ if (!isLoggedIn() || !hasRole('student')) {
     redirect('login.php', 'Please login as a student to access this page.', 'error');
 }
 
+// Auto-update room statuses
+updateRoomStatuses($pdo);
+
 $error = '';
 $success = '';
 
@@ -69,20 +72,17 @@ $flash = getFlashMessage();
             <div class="header-content">
                 <div class="header-left">
                     <div class="dashboard-logo">
-                        <span class="logo-icon">🚀</span>
                         <span class="logo-text">QuizSprint</span>
                     </div>
                     <h1>Student Dashboard</h1>
                 </div>
                 <div class="user-info">
-                    <div class="user-avatar">🎓</div>
                     <div class="user-details">
                         <span class="user-name"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
                         <span class="user-role">Student</span>
                     </div>
                     <a href="logout.php" class="logout-btn">
-                        <span>Logout</span>
-                        <span>→</span>
+                        Logout
                     </a>
                 </div>
             </div>
@@ -100,7 +100,6 @@ $flash = getFlashMessage();
             <div class="join-room-hero">
                 <div class="join-room-container">
                     <div class="join-room-card">
-                        <div class="join-icon">🎯</div>
                         <h2>Join a Quiz Room</h2>
                         <p>Enter the room code provided by your teacher to join the quiz</p>
                         
@@ -118,7 +117,6 @@ $flash = getFlashMessage();
                                 >
                             </div>
                             <button type="submit" class="btn btn-primary btn-large">
-                                <span class="btn-icon">🚪</span>
                                 Join Room
                             </button>
                         </form>
@@ -130,7 +128,7 @@ $flash = getFlashMessage();
                 <div class="section-header">
                     <h3>My Active Rooms</h3>
                     <div class="refresh-btn" onclick="location.reload()">
-                        <span>🔄</span> Refresh
+                        Refresh
                     </div>
                 </div>
                 
@@ -150,7 +148,6 @@ $flash = getFlashMessage();
 
                 <?php if (empty($my_rooms)): ?>
                     <div class="empty-state">
-                        <div class="empty-icon">📚</div>
                         <h4>No active rooms</h4>
                         <p>Join your first quiz room using the code above!</p>
                     </div>
@@ -161,7 +158,6 @@ $flash = getFlashMessage();
                                 <div class="room-header">
                                     <h4><?= htmlspecialchars($room['title']) ?></h4>
                                     <span class="status-badge status-<?= $room['status'] ?>">
-                                        <?= $room['status'] === 'waiting' ? '⏳' : ($room['status'] === 'live' ? '🔴' : '✅') ?>
                                         <?= ucfirst($room['status']) ?>
                                     </span>
                                 </div>
@@ -169,15 +165,12 @@ $flash = getFlashMessage();
                                 <div class="room-info">
                                     <div class="room-meta">
                                         <div class="meta-item">
-                                            <span class="meta-icon">🏷️</span>
                                             <span>Code: <?= $room['room_code'] ?></span>
                                         </div>
                                         <div class="meta-item">
-                                            <span class="meta-icon">👥</span>
                                             <span><?= $room['student_count'] ?> students</span>
                                         </div>
                                         <div class="meta-item">
-                                            <span class="meta-icon">📅</span>
                                             <span>Joined <?= date('M j', strtotime($room['joined_at'])) ?></span>
                                         </div>
                                     </div>
@@ -186,12 +179,10 @@ $flash = getFlashMessage();
                                 <div class="room-actions">
                                     <?php if ($room['status'] === 'live'): ?>
                                         <a href="quiz.php?room=<?= $room['id'] ?>" class="btn btn-success btn-sm pulse">
-                                            <span class="btn-icon">▶️</span>
                                             Join Live Quiz
                                         </a>
                                     <?php elseif ($room['status'] === 'waiting'): ?>
                                         <a href="quiz.php?room=<?= $room['id'] ?>" class="btn btn-primary btn-sm">
-                                            <span class="btn-icon">👁️</span>
                                             View Room
                                         </a>
                                     <?php endif; ?>

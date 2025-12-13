@@ -73,7 +73,9 @@ $flash = getFlashMessage();
 
         <main class="dashboard-main">
             <div class="page-actions">
-                <a href="teacher_dashboard.php" class="btn btn-secondary">← Back to Dashboard</a>
+                <a href="teacher_dashboard.php" class="btn btn-outline">
+                    ← Back to Dashboard
+                </a>
             </div>
 
             <?php if ($flash): ?>
@@ -84,59 +86,73 @@ $flash = getFlashMessage();
                 <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 
-            <div class="form-container">
-                <form method="POST" class="room-form">
-                    <div class="form-group">
-                        <label for="title">Room Title</label>
-                        <input 
-                            type="text" 
-                            id="title" 
-                            name="title" 
-                            placeholder="e.g., Math Quiz - Chapter 5"
-                            value="<?= htmlspecialchars($_POST['title'] ?? '') ?>"
-                            required
-                        >
+            <div class="create-room-wrapper">
+                <div class="form-container glass-card">
+                    <div class="form-header">
+                        <div class="header-icon">✨</div>
+                        <h2>Create New Room</h2>
+                        <p>Configure your quiz session settings below</p>
                     </div>
-
-                    <div class="form-row">
+                    
+                    <form method="POST" class="room-form">
                         <div class="form-group">
-                            <label for="duration_minutes">Quiz Duration (minutes)</label>
+                            <label for="title">
+                                <span class="label-icon">📝</span>
+                                Room Title
+                            </label>
                             <input 
-                                type="number" 
-                                id="duration_minutes" 
-                                name="duration_minutes" 
-                                min="1" 
-                                max="60" 
-                                value="<?= $_POST['duration_minutes'] ?? '10' ?>"
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                placeholder="e.g., Math Quiz - Chapter 5"
+                                value="<?= htmlspecialchars($_POST['title'] ?? '') ?>"
                                 required
+                                class="modern-input"
                             >
                         </div>
 
-                        <div class="form-group">
-                            <label for="max_students">Maximum Students</label>
-                            <input 
-                                type="number" 
-                                id="max_students" 
-                                name="max_students" 
-                                min="1" 
-                                max="40" 
-                                value="<?= $_POST['max_students'] ?? '30' ?>"
-                                required
-                            >
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="duration_minutes">
+                                    <span class="label-icon">⏱️</span>
+                                    Duration (min)
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="duration_minutes" 
+                                    name="duration_minutes" 
+                                    min="1" 
+                                    max="60" 
+                                    value="<?= $_POST['duration_minutes'] ?? '10' ?>"
+                                    required
+                                    class="modern-input"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="max_students">
+                                    <span class="label-icon">👥</span>
+                                    Max Students
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="max_students" 
+                                    name="max_students" 
+                                    min="1" 
+                                    max="40" 
+                                    value="<?= $_POST['max_students'] ?? '30' ?>"
+                                    required
+                                    class="modern-input"
+                                >
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg">Create Room</button>
-                </form>
-
-                <div class="create-room-info">
-                    <h3>What happens next?</h3>
-                    <ol>
-                        <li>Your room will be created with a unique code</li>
-                        <li>Add questions to your quiz</li>
-                        <li>Share the room code with students</li>
-                        <li>Start the quiz when ready!</li>
-                    </ol>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block btn-glow">
+                                Create Room 🚀
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>

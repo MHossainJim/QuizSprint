@@ -6,6 +6,9 @@ if (!isLoggedIn() || !hasRole('teacher')) {
     redirect('login.php', 'Please login as a teacher to access this page.', 'error');
 }
 
+// Auto-update room statuses
+updateRoomStatuses($pdo);
+
 $room_id = $_GET['id'] ?? null;
 if (!$room_id) {
     redirect('teacher_dashboard.php', 'Room not specified.', 'error');
@@ -71,6 +74,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $error = 'Failed to start quiz';
             }
+        }
+    } elseif ($action === 'stop_quiz' && $room['status'] === 'live') {
+        $stmt = $pdo->prepare("UPDATE rooms SET status = 'finished' WHERE id = ?");
+        if ($stmt->execute([$room_id])) {
+            redirect('manage_room.php?id=' . $room_id, 'Quiz stopped successfully!', 'success');
+        } else {
+            $error = 'Failed to stop quiz';
+        }
+    } elseif ($action === 'delete_room') {
+        $stmt = $pdo->prepare("DELETE FROM rooms WHERE id = ?");
+        if ($stmt->execute([$room_id])) {
+            redirect('teacher_dashboard.php', 'Room deleted successfully!', 'success');
+        } else {
+            $error = 'Failed to delete room';
         }
     }
 }
@@ -183,9 +200,21 @@ $flash = getFlashMessage();
                 <?php if ($room['status'] === 'waiting' && $stats['question_count'] > 0): ?>
                     <form method="POST" class="start-quiz-form">
                         <input type="hidden" name="action" value="start_quiz">
-                        <button type="submit" class="btn btn-success btn-lg">🚀 Start Quiz</button>
+                        <button type="submit" class="btn btn-success btn-lg">Start Quiz</button>
+                    </form>
+                <?php elseif ($room['status'] === 'live'): ?>
+                    <form method="POST" class="start-quiz-form" onsubmit="return confirm('Are you sure you want to stop the quiz?');">
+                        <input type="hidden" name="action" value="stop_quiz">
+                        <button type="submit" class="btn btn-secondary btn-lg" style="background: #dc3545; border: none;">Stop Quiz</button>
                     </form>
                 <?php endif; ?>
+
+                <div class="room-actions-footer" style="margin-top: 20px; text-align: center;">
+                    <form method="POST" onsubmit="return confirm('Are you sure you want to delete this room? This action cannot be undone.');">
+                        <input type="hidden" name="action" value="delete_room">
+                        <button type="submit" class="btn btn-outline btn-sm" style="color: #dc3545; border-color: #dc3545;">Delete Room</button>
+                    </form>
+                </div>
             </div>
 
             <div class="manage-sections">

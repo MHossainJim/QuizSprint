@@ -45,4 +45,14 @@ function getFlashMessage() {
 function generateRoomCode($length = 6) {
     return strtoupper(substr(str_shuffle('ABCDEFGHJKLMNPQRSTUVWXYZ23456789'), 0, $length));
 }
+
+// Auto-stop quizzes that have exceeded their duration
+function updateRoomStatuses($pdo) {
+    // Find live rooms where start_time + duration < NOW()
+    $sql = "UPDATE rooms 
+            SET status = 'finished' 
+            WHERE status = 'live' 
+            AND DATE_ADD(start_time, INTERVAL duration_seconds SECOND) < NOW()";
+    $pdo->query($sql);
+}
 ?>
