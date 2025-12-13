@@ -73,8 +73,3 @@ CREATE INDEX idx_room_code ON rooms(room_code);
 CREATE INDEX idx_room_status ON rooms(status);
 CREATE INDEX idx_question_room ON questions(room_id, question_order);
 CREATE INDEX idx_answer_student_room ON answers(student_id, room_id);
-
--- Insert sample data
-INSERT INTO users (name, email, password_hash, role) VALUES 
-('Teacher Demo', 'teacher@demo.com', '$2y$10$example_hash_teacher', 'teacher'),
-('Student Demo', 'student@demo.com', '$2y$10$example_hash_student', 'student');
