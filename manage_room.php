@@ -14,6 +14,12 @@ if (!$room_id) {
     redirect('teacher_dashboard.php', 'Room not specified.', 'error');
 }
 
+// Handle GET action (from dashboard quick start)
+if (isset($_GET['action']) && $_GET['action'] === 'start') {
+    $_POST['action'] = 'start_quiz';
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+}
+
 // Get room details
 $stmt = $pdo->prepare("SELECT * FROM rooms WHERE id = ? AND teacher_id = ?");
 $stmt->execute([$room_id, $_SESSION['user_id']]);

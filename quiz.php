@@ -51,49 +51,59 @@ $total_questions = $stmt->fetch()['total'];
     <title>Quiz: <?= htmlspecialchars($room['title']) ?> - QuizSprint</title>
     <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<body class="quiz-page">
     <div class="quiz-container" id="quizContainer">
-        <header class="quiz-header">
-            <div class="quiz-info">
-                <h1><?= htmlspecialchars($room['title']) ?></h1>
-                <div class="quiz-meta">
-                    <span class="room-code">Room: <?= $room['room_code'] ?></span>
-                    <span class="quiz-progress">Progress: <span id="progress"><?= $progress ?></span>/<?= $total_questions ?></span>
-                    <span class="quiz-timer" id="timer">--:--</span>
+        <header class="quiz-header-modern">
+            <div class="quiz-header-left">
+                <div class="quiz-title-group">
+                    <h1 class="quiz-title"><?= htmlspecialchars($room['title']) ?></h1>
+                    <span class="quiz-code-badge">Room: <?= $room['room_code'] ?></span>
                 </div>
             </div>
-            <div class="quiz-status">
+            <div class="quiz-header-right">
+                <div class="quiz-stats-inline">
+                    <div class="stat-inline">
+                        <span class="stat-icon">📝</span>
+                        <span class="stat-value" id="progress"><?= $progress ?></span>/<span><?= $total_questions ?></span>
+                    </div>
+                    <div class="stat-inline timer-stat">
+                        <span class="stat-icon">⏱️</span>
+                        <span class="stat-value" id="timer">--:--</span>
+                    </div>
+                </div>
                 <span class="status-badge status-<?= $room['status'] ?>" id="quizStatus">
                     <?= ucfirst($room['status']) ?>
                 </span>
-                <a href="join_room.php" class="btn btn-sm btn-secondary">Back</a>
             </div>
         </header>
 
-        <main class="quiz-main">
+        <main class="quiz-main-modern">
             <?php if ($room['status'] === 'waiting'): ?>
-                <div class="waiting-screen">
-                    <div class="waiting-content">
-                        <h2>Waiting for Quiz to Start</h2>
-                        <p>Your teacher will start the quiz soon. Stay on this page!</p>
-                        <div class="waiting-stats">
-                            <div class="stat">
-                                <span class="stat-number"><?= $total_questions ?></span>
-                                <span class="stat-label">Questions</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number"><?= $room['duration_seconds'] ?>s</span>
-                                <span class="stat-label">Duration</span>
-                            </div>
+                <div class="waiting-screen-modern">
+                    <div class="waiting-animation">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-icon">⏳</div>
+                    </div>
+                    <h2 class="waiting-title">Waiting for Quiz to Start</h2>
+                    <p class="waiting-subtitle">Your teacher will start the quiz soon. Stay on this page!</p>
+                    <div class="waiting-info-grid">
+                        <div class="info-card">
+                            <div class="info-icon">📋</div>
+                            <div class="info-value"><?= $total_questions ?></div>
+                            <div class="info-label">Questions</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">⏱️</div>
+                            <div class="info-value"><?= gmdate('i:s', $room['duration_seconds']) ?></div>
+                            <div class="info-label">Duration</div>
                         </div>
                     </div>
                 </div>
             <?php elseif ($room['status'] === 'finished'): ?>
-                <div class="finished-screen">
-                    <div class="finished-content">
-                        <h2>Quiz Completed</h2>
-                        <p>Thanks for participating! Check the final leaderboard below.</p>
-                    </div>
+                <div class="finished-screen-modern">
+                    <div class="finished-icon">🎉</div>
+                    <h2 class="finished-title">Quiz Completed!</h2>
+                    <p class="finished-subtitle">Thanks for participating! Check the leaderboard below to see your ranking.</p>
                 </div>
             <?php else: ?>
                 <!-- Live Quiz Screen -->
