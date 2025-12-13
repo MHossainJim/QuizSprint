@@ -67,10 +67,23 @@ $flash = getFlashMessage();
     <div class="dashboard-container">
         <header class="dashboard-header">
             <div class="header-content">
-                <h1>Join Quiz Room</h1>
+                <div class="header-left">
+                    <div class="dashboard-logo">
+                        <span class="logo-icon">🚀</span>
+                        <span class="logo-text">QuizSprint</span>
+                    </div>
+                    <h1>Student Dashboard</h1>
+                </div>
                 <div class="user-info">
-                    Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?>
-                    <a href="logout.php" class="logout-btn">Logout</a>
+                    <div class="user-avatar">🎓</div>
+                    <div class="user-details">
+                        <span class="user-name"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                        <span class="user-role">Student</span>
+                    </div>
+                    <a href="logout.php" class="logout-btn">
+                        <span>Logout</span>
+                        <span>→</span>
+                    </a>
                 </div>
             </div>
         </header>
@@ -84,30 +97,43 @@ $flash = getFlashMessage();
                 <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 
-            <div class="join-room-container">
-                <div class="join-room-card">
-                    <h2>Enter Room Code</h2>
-                    <p>Ask your teacher for the room code to join the quiz</p>
-                    
-                    <form method="POST" class="join-room-form">
-                        <div class="room-code-input">
-                            <input 
-                                type="text" 
-                                name="room_code" 
-                                placeholder="Enter room code" 
-                                maxlength="10"
-                                value="<?= htmlspecialchars($_POST['room_code'] ?? '') ?>"
-                                style="font-size: 2rem; text-align: center; text-transform: uppercase;"
-                                required
-                            >
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-lg">Join Room</button>
-                    </form>
+            <div class="join-room-hero">
+                <div class="join-room-container">
+                    <div class="join-room-card">
+                        <div class="join-icon">🎯</div>
+                        <h2>Join a Quiz Room</h2>
+                        <p>Enter the room code provided by your teacher to join the quiz</p>
+                        
+                        <form method="POST" class="join-room-form">
+                            <div class="room-code-input">
+                                <label>Room Code</label>
+                                <input 
+                                    type="text" 
+                                    name="room_code" 
+                                    placeholder="ABCD12" 
+                                    maxlength="10"
+                                    value="<?= htmlspecialchars($_POST['room_code'] ?? '') ?>"
+                                    required
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large">
+                                <span class="btn-icon">🚪</span>
+                                Join Room
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="my-rooms-section">
-                <h3>My Active Rooms</h3>
+            <section class="my-rooms-section">
+                <div class="section-header">
+                    <h3>My Active Rooms</h3>
+                    <div class="refresh-btn" onclick="location.reload()">
+                        <span>🔄</span> Refresh
+                    </div>
+                </div>
+                
                 <?php
                 // Get rooms student has joined
                 $stmt = $pdo->prepare("
@@ -123,31 +149,58 @@ $flash = getFlashMessage();
                 ?>
 
                 <?php if (empty($my_rooms)): ?>
-                    <p class="text-muted">You haven't joined any rooms yet.</p>
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <h4>No active rooms</h4>
+                        <p>Join your first quiz room using the code above!</p>
+                    </div>
                 <?php else: ?>
-                    <div class="rooms-list">
+                    <div class="rooms-grid">
                         <?php foreach ($my_rooms as $room): ?>
-                            <div class="room-item">
-                                <div class="room-info">
+                            <div class="student-room-card room-status-<?= $room['status'] ?>">
+                                <div class="room-header">
                                     <h4><?= htmlspecialchars($room['title']) ?></h4>
+                                    <span class="status-badge status-<?= $room['status'] ?>">
+                                        <?= $room['status'] === 'waiting' ? '⏳' : ($room['status'] === 'live' ? '🔴' : '✅') ?>
+                                        <?= ucfirst($room['status']) ?>
+                                    </span>
+                                </div>
+                                
+                                <div class="room-info">
                                     <div class="room-meta">
-                                        <span class="room-code">Code: <?= $room['room_code'] ?></span>
-                                        <span class="status-badge status-<?= $room['status'] ?>">
-                                            <?= ucfirst($room['status']) ?>
-                                        </span>
-                                        <span>👥 <?= $room['student_count'] ?> students</span>
+                                        <div class="meta-item">
+                                            <span class="meta-icon">🏷️</span>
+                                            <span>Code: <?= $room['room_code'] ?></span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-icon">👥</span>
+                                            <span><?= $room['student_count'] ?> students</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-icon">📅</span>
+                                            <span>Joined <?= date('M j', strtotime($room['joined_at'])) ?></span>
+                                        </div>
                                     </div>
                                 </div>
+                                
                                 <div class="room-actions">
-                                    <a href="quiz.php?room=<?= $room['id'] ?>" class="btn btn-sm btn-primary">
-                                        <?= $room['status'] === 'live' ? 'Join Quiz' : 'View Room' ?>
-                                    </a>
+                                    <?php if ($room['status'] === 'live'): ?>
+                                        <a href="quiz.php?room=<?= $room['id'] ?>" class="btn btn-success btn-sm pulse">
+                                            <span class="btn-icon">▶️</span>
+                                            Join Live Quiz
+                                        </a>
+                                    <?php elseif ($room['status'] === 'waiting'): ?>
+                                        <a href="quiz.php?room=<?= $room['id'] ?>" class="btn btn-primary btn-sm">
+                                            <span class="btn-icon">👁️</span>
+                                            View Room
+                                        </a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
-            </div>
+            </section>
         </main>
     </div>
 

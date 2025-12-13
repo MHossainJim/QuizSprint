@@ -46,10 +46,27 @@ $flash = getFlashMessage();
 </head>
 <body>
     <div class="auth-container">
+        <!-- Background Elements -->
+        <div class="auth-background">
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+
         <div class="auth-card">
+            <!-- Back to home link -->
+            <div class="auth-nav">
+                <a href="index.php" class="back-link">
+                    <span>←</span> Back to QuizSprint
+                </a>
+            </div>
+
             <div class="auth-header">
-                <h1>Welcome Back</h1>
-                <p>Sign in to your QuizSprint account</p>
+                <div class="auth-icon">🚀</div>
+                <h1>Welcome Back!</h1>
+                <p>Sign in to continue your quiz journey</p>
             </div>
 
             <?php if ($flash): ?>
@@ -62,20 +79,37 @@ $flash = getFlashMessage();
 
             <form method="POST" class="auth-form">
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                    <label for="email">
+                        <span class="label-icon">📧</span>
+                        Email Address
+                    </label>
+                    <input type="email" id="email" name="email" required 
+                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                           placeholder="Enter your email">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="password">
+                        <span class="label-icon">🔒</span>
+                        Password
+                    </label>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Enter your password">
                 </div>
 
-                <button type="submit" class="auth-btn">Login</button>
+                <button type="submit" class="auth-btn">
+                    <span>Login to QuizSprint</span>
+                    <span class="btn-icon">→</span>
+                </button>
             </form>
 
+            <div class="auth-divider">
+                <span>New to QuizSprint?</span>
+            </div>
+
             <div class="auth-footer">
-                Don't have an account? <a href="register.php">Register here</a>
+                <a href="register.php" class="register-link">Create your account</a>
+                <p class="auth-footer-text">Join thousands of educators and students</p>
             </div>
         </div>
     </div>
