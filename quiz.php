@@ -17,7 +17,8 @@ if (!$room_id) {
 
 // Check if student is in this room
 $stmt = $pdo->prepare("
-    SELECT r.*, rs.id as student_room_id 
+    SELECT r.*, rs.id as student_room_id,
+           TIMESTAMPDIFF(SECOND, r.start_time, NOW()) as elapsed_seconds
     FROM rooms r 
     LEFT JOIN room_students rs ON r.id = rs.room_id AND rs.student_id = ?
     WHERE r.id = ?
@@ -129,8 +130,8 @@ $total_questions = $stmt->fetch()['total'];
         window.quizData = {
             roomId: <?= $room_id ?>,
             status: '<?= $room['status'] ?>',
-            startTime: <?= $room['start_time'] ? "new Date('" . $room['start_time'] . "').getTime()" : 'null' ?>,
-            duration: <?= $room['duration_seconds'] ?> * 1000,
+            elapsed: <?= $room['elapsed_seconds'] ?? 0 ?>,
+            duration: <?= $room['duration_seconds'] ?>,
             currentQuestion: <?= $progress + 1 ?>,
             totalQuestions: <?= $total_questions ?>
         };

@@ -50,12 +50,16 @@ function initializeQuiz() {
 
 function startQuizTimer() {
     const timerElement = document.getElementById('timer');
-    if (!timerElement || !window.quizData.startTime) return;
+    if (!timerElement) return;
+    
+    // Calculate end time based on elapsed seconds from server
+    const now = Date.now();
+    const remainingSeconds = window.quizData.duration - window.quizData.elapsed;
+    const endTime = now + (remainingSeconds * 1000);
     
     quizTimer = setInterval(function() {
-        const now = Date.now();
-        const elapsed = now - window.quizData.startTime;
-        const remaining = Math.max(0, window.quizData.duration - elapsed);
+        const currentNow = Date.now();
+        const remaining = Math.max(0, endTime - currentNow);
         
         if (remaining <= 0) {
             clearInterval(quizTimer);
@@ -83,7 +87,7 @@ function loadNextQuestion() {
                 displayQuestion(data.question);
                 updateProgress(data.progress);
             } else {
-                if (data.message === 'No more questions') {
+                if (data.message === 'No more questions' || data.message === 'Quiz time is up') {
                     handleQuizEnd();
                 } else {
                     console.error('Error loading question:', data.message);

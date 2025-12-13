@@ -18,7 +18,8 @@ if (!$room_id) {
 try {
     // Check if student is in this room
     $stmt = $pdo->prepare("
-        SELECT r.*, rs.id as student_room_id 
+        SELECT r.*, rs.id as student_room_id,
+               TIMESTAMPDIFF(SECOND, r.start_time, NOW()) as elapsed_seconds
         FROM rooms r 
         LEFT JOIN room_students rs ON r.id = rs.room_id AND rs.student_id = ?
         WHERE r.id = ?
@@ -36,7 +37,11 @@ try {
         exit;
     }
     
-    // Get student's answered questions
+    // Check if quiz time is up
+    if ($room['elapsed_seconds'] >= $room['duration_seconds']) {
+        echo json_encode(['success' => false, 'message' => 'Quiz time is up']);
+        exit;
+    }
     $stmt = $pdo->prepare("SELECT question_id FROM answers WHERE room_id = ? AND student_id = ?");
     $stmt->execute([$room_id, $_SESSION['user_id']]);
     $answered_questions = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -56,16 +61,6 @@ try {
         exit;
     }
     
-    // Check if quiz time is up
-    $start_time = strtotime($room['start_time']);
-    $current_time = time();
-    $elapsed = $current_time - $start_time;
-    
-    if ($elapsed >= $room['duration_seconds']) {
-        echo json_encode(['success' => false, 'message' => 'Quiz time is up']);
-        exit;
-    }
-    
     echo json_encode([
         'success' => true,
         'question' => [
@@ -79,7 +74,7 @@ try {
             ]
         ],
         'progress' => count($answered_questions) + 1,
-        'time_remaining' => max(0, $room['duration_seconds'] - $elapsed)
+        'time_remaining' => max(0, $room['duration_seconds'] - $room['elapsed_seconds'])
     ]);
     
 } catch (Exception $e) {
