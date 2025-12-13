@@ -1,7 +1,7 @@
 -- QuizSprint Database Schema
 -- Create database
---CREATE DATABASE IF NOT EXISTS quizsprint;
---USE quizsprint;
+-- CREATE DATABASE IF NOT EXISTS quizsprint;
+-- USE quizsprint;
 
 -- Users table (Teachers and Students)
 CREATE TABLE users (
