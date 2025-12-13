@@ -268,6 +268,9 @@ function pollRoomStatus() {
                     if (data.status === 'live') {
                         clearInterval(statusPoll);
                         window.location.reload(); // Reload to start quiz
+                    } else if (data.status === 'finished') {
+                        clearInterval(statusPoll);
+                        window.location.reload(); // Reload to show finished screen
                     }
                 }
             })

@@ -111,6 +111,7 @@ $total_questions = $stmt->fetch()['total'];
                 <div class="quiz-screen" id="quizScreen">
                     <div class="question-container" id="questionContainer">
                         <!-- Questions loaded via JavaScript -->
+                        <div class="loading-spinner">Loading question...</div>
                     </div>
                 </div>
             <?php endif; ?>

@@ -33,7 +33,8 @@ if (!in_array($selected_option, [1, 2, 3, 4])) {
 try {
     // Check if student is in this room
     $stmt = $pdo->prepare("
-        SELECT r.*, rs.id as student_room_id 
+        SELECT r.*, rs.id as student_room_id,
+               TIMESTAMPDIFF(SECOND, r.start_time, NOW()) as elapsed_seconds
         FROM rooms r 
         LEFT JOIN room_students rs ON r.id = rs.room_id AND rs.student_id = ?
         WHERE r.id = ?
@@ -71,11 +72,7 @@ try {
     }
     
     // Check if quiz time is up
-    $start_time = strtotime($room['start_time']);
-    $current_time = time();
-    $elapsed = $current_time - $start_time;
-    
-    if ($elapsed >= $room['duration_seconds']) {
+    if ($room['elapsed_seconds'] >= $room['duration_seconds']) {
         echo json_encode(['success' => false, 'message' => 'Quiz time is up']);
         exit;
     }
